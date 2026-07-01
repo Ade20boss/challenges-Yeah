@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define READ_SIZE 16
+#define BUFFER_SIZE 16
+#define MIN_PRINTABLE 32
+#define MAX_PRINTABLE 126
 
 int hex_dump(char *filename)
 {
@@ -9,7 +11,7 @@ int hex_dump(char *filename)
     size_t bytes_read;
     size_t offset = 0;
 
-    unsigned char buffer[READ_SIZE];
+    unsigned char buffer[BUFFER_SIZE];
 
     FILE *file_pointer = fopen(filename, "rb");
     if (file_pointer == NULL)
@@ -20,19 +22,21 @@ int hex_dump(char *filename)
     }
 
 
-    while ((bytes_read = fread(buffer, 1, READ_SIZE, file_pointer)) > 0)
+    while ((bytes_read = fread(buffer, 1, BUFFER_SIZE, file_pointer)) > 0)
     {
         printf("%08zx: ", offset);
-        for (size_t i = 0; i < 16; i++)
+        for (size_t i = 0; i < BUFFER_SIZE; i++)
         {
             if (i < bytes_read)
             {
                 printf("%c%c", table[buffer[i] >> 4], table[buffer[i] & 0x0F]);
             }
+
             else
             {
                 printf("  ");
             }
+
             if (i % 2 != 0)
             {
                 printf(" ");
@@ -43,7 +47,7 @@ int hex_dump(char *filename)
 
         for (size_t j = 0; j < bytes_read; j++)
         {
-            if (buffer[j] >= 32 && buffer[j] <= 126)
+            if (buffer[j] >= MIN_PRINTABLE && buffer[j] <= MAX_PRINTABLE)
             {
                 printf("%c", buffer[j]);
             }
