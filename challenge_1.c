@@ -15,6 +15,7 @@ int hex_dump(char *filename)
     if (file_pointer == NULL)
     {
         fprintf(stderr, "Cannot open file\n");
+        fclose(file_pointer);
         return 1;
     }
 
@@ -61,11 +62,13 @@ int hex_dump(char *filename)
     if (ferror(file_pointer))
     {
         fprintf(stderr, "An error occured while reading the file.\n");
+        fclose(file_pointer);
         return 1;
     }
 
     else if (feof(file_pointer))
     {
+        fclose(file_pointer);
         return 0;
     }
 
